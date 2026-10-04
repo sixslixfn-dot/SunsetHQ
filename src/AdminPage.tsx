@@ -7,6 +7,17 @@ import './admin-editor.css'
 type ApiMessage = { authenticated?: boolean; message?: string }
 type ContentField = { path: string[]; label: string; value: string }
 
+async function readJsonResponse<T>(response: Response, fallbackMessage: string): Promise<T> {
+  const rawText = await response.text()
+  if (!rawText) throw new Error(fallbackMessage)
+
+  try {
+    return JSON.parse(rawText) as T
+  } catch {
+    throw new Error(fallbackMessage)
+  }
+}
+
 function SunsetMark() {
   return <img className="sunset-mark" src="/images/sunset-mark.svg" alt="" aria-hidden="true" />
 }
@@ -38,7 +49,7 @@ function updateAtPath(content: SiteContent, path: string[], value: string): Site
 async function getAdminContent(): Promise<SiteContent> {
   const response = await fetch('/api/admin/site-content', { credentials: 'same-origin', cache: 'no-store' })
   if (!response.ok) throw new Error('Could not load website copy. Please sign in again.')
-  return response.json() as Promise<SiteContent>
+  return readJsonResponse<SiteContent>(response, 'Could not load website copy. Please sign in again.')
 }
 
 export default function AdminPage() {
@@ -60,7 +71,7 @@ export default function AdminPage() {
     setCheckingSession(true)
     try {
       const response = await fetch('/api/admin/session', { credentials: 'same-origin', cache: 'no-store' })
-      const result = await response.json() as ApiMessage
+      const result = await readJsonResponse<ApiMessage>(response, 'The secure admin service could not be reached. Start the full development server and try again.')
       if (response.ok && result.authenticated) {
         setSiteContent(await getAdminContent())
         setSignedIn(true)
@@ -92,7 +103,7 @@ export default function AdminPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username: formData.get('username'), password: formData.get('password') }),
       })
-      const result = await response.json() as ApiMessage
+      const result = await readJsonResponse<ApiMessage>(response, 'The secure admin service could not be reached. Start the full development server and try again.')
       if (!response.ok) throw new Error(result.message ?? 'Sign-in failed. Please try again.')
       formElement.reset()
       setSiteContent(await getAdminContent())
@@ -115,7 +126,7 @@ export default function AdminPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(siteContent),
       })
-      const result = await response.json() as ApiMessage
+      const result = await readJsonResponse<ApiMessage>(response, 'The secure admin service could not be reached. Start the full development server and try again.')
       if (!response.ok) throw new Error(result.message ?? 'Changes could not be saved.')
       setMessage('Changes published to the website.')
       setPreviewVersion((version) => version + 1)
