@@ -204,7 +204,14 @@ export default function App() {
     const description = document.querySelector<HTMLMetaElement>('meta[name="description"]')
     if (description) description.content = content.seo.description
   }, [content.seo.description, content.seo.title])
-  if (window.location.pathname === '/tacos7') return <AdminPage />
+  if (window.location.pathname === '/tacos7') {
+    const isLocalDev = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    if (!isLocalDev) {
+      window.location.replace('/')
+      return null
+    }
+    return <AdminPage />
+  }
   if (window.location.pathname === '/merch') return <MerchPage content={content} />
   return <SunsetSite content={content} contentReady={contentReady} />
 }
