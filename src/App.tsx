@@ -174,7 +174,7 @@ function SunsetSite({ content, contentReady }: { content: SiteContent; contentRe
         <section className="join" id="join">
           <div className="join-inner">
             <div className="section-kicker"><span>{content.join.kicker}</span><span className="kicker-rule" /></div>
-            <div className="join-layout"><div><p className="join-overline">{content.join.overline}</p><h2>{content.join.headlineTop}<br />AT <em>{content.join.headlineBottom}</em></h2></div><div className="join-aside"><p>{content.join.description}</p><a className="button button-primary" href="mailto:hello@sunsetesports.gg?subject=Sunset%20Esports%20interest">{content.join.button} <span>↗</span></a><small>{content.join.note}</small></div></div>
+            <div className="join-layout"><div><p className="join-overline">{content.join.overline}</p><h2>{content.join.headlineTop}<br />AT <em>{content.join.headlineBottom}</em></h2></div><div className="join-aside"><p>{content.join.description}</p><a className="button button-primary" href="https://discord.gg/yVDK3EN2uc" target="_blank" rel="noreferrer">{content.join.button} <span>↗</span></a><small>{content.join.note}</small></div></div>
           </div>
         </section>
       </main>
